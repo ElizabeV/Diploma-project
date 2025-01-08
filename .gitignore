@@ -32,6 +32,7 @@ out/
 
 ### Package Files ###
 *.jar
+!aqa-shop.jar
 *.war
 *.nar
 *.ear
