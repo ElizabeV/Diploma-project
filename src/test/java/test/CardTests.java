@@ -8,8 +8,9 @@ import org.junit.jupiter.api.*;
 import page.MainPage;
 import page.PaymentForm;
 
-import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.*;
 import static data.DataGenerator.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,11 +70,14 @@ public class CardTests {
     }
 
     @Test
-    @DisplayName("При заполнении поля номера карты 16 символами происходит отказ в проведении операции")
+    @DisplayName("При заполнении поля номера карты 16 случайными символами происходит отказ в проведении операции")
     void shouldBeRejectIfRandom16Symbols() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getInvalidCardNumberFormat(false), getMonth(true), getYear(true), getName(true), getValidCvc());
-        paymentForm.expectedFailureNotification();
+        assertAll(() -> $(byText("Недействительный номер карты")).shouldBe(visible),
+                () -> paymentForm.expectedFailureNotification()
+        );
+
     }
 
     @Test
