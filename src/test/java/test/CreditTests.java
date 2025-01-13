@@ -22,16 +22,10 @@ public class CreditTests {
     }
 
     @Test
-    @DisplayName("По кнокпе \"Купить в кредит\" открывается форма \"Кредит по данным карты\"")
-    void shouldOpenCreditFormWithButtonBuyByCredit() {
-        mainPage.openCreditForm();
-    }
-
-    @Test
     @DisplayName("При заполнении формы \"Кредит по данным карты\" валидными данными всех полей и нажатии кнопки \"Продолжить\" появляется уведомление об успешной оплате")
     void happyPathWithCreditCard() {
         creditForm = mainPage.openCreditForm();
-        creditForm.fillCardData(getApprovedCardNumber(), getMonth(true), getYear(true), getName(true), getValidCvc());
+        creditForm.fillCardData(getApprovedCardNumber(), getMonth(1), getYear(0), getName("en"), getValidCvc());
         creditForm.expectedSuccessNotification();
         assertEquals("APPROVED", SQLHelper.getCreditStatus());
     }
@@ -48,7 +42,7 @@ public class CreditTests {
     @DisplayName("При заполнении поля номера карты данными заблокированной карты происходит отказ в оплате в форме \"Кредит по данным карты\"")
     void shouldPaymentDenyWithDeclinedCard() {
         creditForm = mainPage.openCreditForm();
-        creditForm.fillCardData(getDeclinedCardNumber(), getMonth(true), getYear(true), getName(true), getValidCvc());
+        creditForm.fillCardData(getDeclinedCardNumber(), getMonth(1), getYear(1), getName("en"), getValidCvc());
         assertAll(() -> creditForm.expectedFailureNotification(),
                 () -> assertEquals("DECLINED", SQLHelper.getCreditStatus())
         );

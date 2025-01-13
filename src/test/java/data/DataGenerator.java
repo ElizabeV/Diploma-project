@@ -29,13 +29,9 @@ public class DataGenerator {
         return number;
     }
 
-    public static String getMonth(boolean isValid) {
-        int currentMonth = LocalDate.now().getMonthValue();
-        int month = isValid ? currentMonth : currentMonth - 1;
-        if (LocalDate.now().getMonthValue() == 1 && !isValid) {
-            month = 12;
-        }
-        return String.format("%02d", month);
+    public static String getMonth(int monthsToAdd) {
+        LocalDate month = LocalDate.now().plusMonths(monthsToAdd);
+        return String.format("%02d", month.getMonthValue());
     }
 
     public static String getInvalidMonthFormat(boolean isShort) {
@@ -48,12 +44,9 @@ public class DataGenerator {
         return month;
     }
 
-    public static String getYear(boolean isValid){
-        int currentYear = LocalDate.now().getYear();
-        int lastTwoDigits = currentYear % 100;
-        if (LocalDate.now().getMonthValue() == 1 && !isValid) {
-            lastTwoDigits = lastTwoDigits - 1;
-        }
+    public static String getYear(int yearToAdd){
+        int year = LocalDate.now().plusYears(yearToAdd).getYear();
+        int lastTwoDigits = year % 100;
         return String.format("%02d", lastTwoDigits);
     }
 
@@ -67,9 +60,9 @@ public class DataGenerator {
         return year;
     }
 
-    public static String getName(boolean isValid){
-        Locale locale = isValid ? new Locale("en") : new Locale("ru");
-        Faker faker = new Faker(locale);
+    public static String getName(String locale){
+        Locale local = new Locale(locale);
+        Faker faker = new Faker(local);
         return faker.name().firstName() + " " + faker.name().lastName(); // or full?
     }
 

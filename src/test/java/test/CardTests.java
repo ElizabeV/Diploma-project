@@ -29,23 +29,17 @@ public class CardTests {
         SelenideLogger.removeListener("allure");
     }
 
-    @BeforeEach
+    @BeforeEach 
     void setup() {
         mainPage = open("http://localhost:8080", MainPage.class);
     }
 
 
     @Test
-    @DisplayName("По кнопке \"Купить\" открывается форма \"Оплата по карте\"")
-    void shouldOpenPaymentFormByButtonBuy() {
-        mainPage.openPaymentForm();
-    }
-
-    @Test
     @DisplayName("При заполнении формы \"Оплата по карте\" валидными данными всех полей и нажатии кнопки \"Продолжить\" появляется уведомление об успешной оплате")
     void happyPathWithPaymentCard() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(true), getYear(true), getName(true), getValidCvc());
+        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(0), getYear(0), getName("en"), getValidCvc());
         paymentForm.expectedSuccessNotification();
         assertEquals("APPROVED", SQLHelper.getPayStatus());
     }
@@ -62,7 +56,7 @@ public class CardTests {
     @DisplayName("При заполнении поля номера карты данными заблокированной карты происходит отказ в оплате в форме \"Оплата по карте\"")
     void shouldPaymentDenyWithDeclinedCard() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getDeclinedCardNumber(), getMonth(true), getYear(true), getName(true), getValidCvc());
+        paymentForm.fillCardData(getDeclinedCardNumber(), getMonth(1), getYear(1), getName("en"), getValidCvc());
         assertAll(() -> paymentForm.expectedFailureNotification(),
                 () -> assertEquals("DECLINED", SQLHelper.getPayStatus())
         );
@@ -73,7 +67,7 @@ public class CardTests {
     @DisplayName("При заполнении поля номера карты 16 случайными символами происходит отказ в проведении операции")
     void shouldBeRejectIfRandom16Symbols() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getInvalidCardNumberFormat(false), getMonth(true), getYear(true), getName(true), getValidCvc());
+        paymentForm.fillCardData(getInvalidCardNumberFormat(false), getMonth(1), getYear(3), getName("en"), getValidCvc());
         assertAll(() -> $(byText("Недействительный номер карты")).shouldBe(visible),
                 () -> paymentForm.expectedFailureNotification()
         );
@@ -119,7 +113,7 @@ public class CardTests {
     @DisplayName("При заполнении поля Владелец кириллицей поле не заполняется")
     void shouldNotFillNameField() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(true), getYear(true), getName(false), getValidCvc());
+        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(1), getYear(4), getName("ru"), getValidCvc());
         String actualText = $$(".input__control").get(3).getValue();
         assertEquals("", actualText);
     }
@@ -128,7 +122,7 @@ public class CardTests {
     @DisplayName("При заполнении поля Месяц и Год датой, меньше текущей, после нажатия кнопки \"Продолжить\" появляется подсказка \"Истек срок действия карты\"")
     void shouldNotAcceptExpiredData() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(false), getYear(false), getName(true), getValidCvc());
+        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(-3), getYear(-1), getName("en"), getValidCvc());
         paymentForm.expectedCardHasExpired();
     }
 }
