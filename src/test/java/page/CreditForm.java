@@ -1,15 +1,17 @@
 package page;
 
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
 
+import static com.codeborne.selenide.Condition.empty;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreditForm {
     private final SelenideElement header = $(byText("Кредит по данным карты"));
@@ -21,9 +23,13 @@ public class CreditForm {
     private final SelenideElement continueButton = $(byText("Продолжить"));
     private final SelenideElement successNotification = $(byText("Операция одобрена Банком."));
     private final SelenideElement failureNotification = $(byText("Ошибка! Банк отказал в проведении операции."));
-    public CreditForm(){
+    private final ElementsCollection fieldsRedValidation = $$(".input__sub");
+    private final SelenideElement expiredData = $(byText("Истёк срок действия карты"));
+
+    public CreditForm() {
         header.shouldBe(visible);
     }
+
     public void fillCardData(String cardNumber, String month, String year, String name, String cvc) {
         cardNumberField.setValue(cardNumber);
         monthField.setValue(month);
@@ -39,19 +45,24 @@ public class CreditForm {
 
     public void expectedFieldMustBeFilled() {
         String expectedTexts = "Поле обязательно для заполнения";
-        String[] actualText = new String[5];
-        for (int i = 0; i < 5; i++) {
-            actualText[i] = $$(".input__sub").get(i).getText();
-        }
-        assertAll( () -> assertEquals(expectedTexts, actualText[0], "Результат 1 не совпадает"),
-                () -> assertEquals(expectedTexts, actualText[1], "Результат 2 не совпадает"),
-                () -> assertEquals(expectedTexts, actualText[2], "Результат 3 не совпадает"),
-                () -> assertEquals(expectedTexts, actualText[3], "Результат 4 не совпадает"),
-                () -> assertEquals(expectedTexts, actualText[4], "Результат 5 не совпадает")
-        );
+        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedTexts, expectedTexts, expectedTexts, expectedTexts, expectedTexts));
     }
 
     public void expectedFailureNotification() {
         failureNotification.shouldBe(visible, Duration.ofSeconds(15));
+    }
+
+    public void expectedInvalidCardNumber() {
+        assertAll(() -> $(byText("Недействительный номер карты")).shouldBe(visible),
+                this::expectedFailureNotification
+        );
+    }
+
+    public void expectedCardHasExpired() {
+        expiredData.shouldBe(visible);
+    }
+
+    public void expectedBlankNameField() {
+        ownerField.shouldBe(empty);
     }
 }
