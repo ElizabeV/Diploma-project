@@ -43,9 +43,14 @@ public class CreditForm {
         successNotification.shouldBe(visible, Duration.ofSeconds(15));
     }
 
-    public void expectedFieldMustBeFilled() {
+    public void expectedFiveFieldsMustBeFilled() {
         String expectedTexts = "Поле обязательно для заполнения";
         fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedTexts, expectedTexts, expectedTexts, expectedTexts, expectedTexts));
+    }
+
+    public void expectedFieldMustBeFilled() {
+        String expectedText = "Поле обязательно для заполнения";
+        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedText));
     }
 
     public void expectedFailureNotification() {

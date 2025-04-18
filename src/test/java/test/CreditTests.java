@@ -34,7 +34,7 @@ public class CreditTests {
     void shouldFailPayIfAllFieldsIsEmpty() {
         creditForm = mainPage.openCreditForm();
         creditForm.fillCardData(null, null, null, null, null);
-        creditForm.expectedFieldMustBeFilled();
+        creditForm.expectedFiveFieldsMustBeFilled();
     }
     @Test
     @DisplayName("16. При нажатии кнопки \"Продолжить\" формы с пустым полем Номер карты у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Кредит по данным карты\"")
