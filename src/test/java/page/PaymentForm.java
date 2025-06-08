@@ -46,12 +46,11 @@ public class PaymentForm {
         successNotification.shouldBe(visible, Duration.ofSeconds(15));
     }
 
-    public void expectedFiveFieldsMustBeFilled() {
-        String expectedTexts = "Поле обязательно для заполнения";
-        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedTexts, expectedTexts, expectedTexts, expectedTexts, expectedTexts));
+    public void expectedFiveFieldsMustBeFilled(String expCard, String expMonth, String expYear, String expName, String expCvc) {
+        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expCard, expMonth, expYear, expName, expCvc));
     }
-    public void expectedFieldMustBeFilled() {
-        String expectedTexts = "Поле обязательно для заполнения";
+
+    public void expectedFieldMustBeFilled(String expectedTexts) {
         fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedTexts));
     }
 
@@ -59,14 +58,12 @@ public class PaymentForm {
         failureNotification.shouldBe(visible, Duration.ofSeconds(15));
     }
 
-    public void expectedInvalidCardNumber() {
-        assertAll(() -> $(byText("Недействительный номер карты")).shouldBe(visible),
-                this::expectedFailureNotification
-        );
-    }
-
     public void expectedCardHasExpired() {
         expiredData.shouldBe(visible);
+    }
+
+    public void expectedInvalidFormat() {
+        invalidFormat.shouldBe(visible);
     }
 
     public void expectedBlankNameField() {

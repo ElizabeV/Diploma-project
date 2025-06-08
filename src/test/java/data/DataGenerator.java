@@ -1,7 +1,6 @@
 package data;
 
 import com.github.javafaker.Faker;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.time.LocalDate;
 import java.util.Locale;
@@ -50,5 +49,11 @@ public class DataGenerator {
         Random random = new Random();
         int cvc = random.nextInt(1000);
         return String.format("%03d", cvc);
+    }
+
+    public static String getShortCvc(){
+        Random random = new Random();
+        int cvc = random.nextInt(100);
+        return String.valueOf(cvc);
     }
 }

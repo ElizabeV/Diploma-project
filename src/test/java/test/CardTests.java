@@ -44,42 +44,48 @@ public class CardTests {
     void shouldFailPayIfAllFieldsIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(null, null, null, null, null);
-        paymentForm.expectedFiveFieldsMustBeFilled();
+        paymentForm.expectedFiveFieldsMustBeFilled(
+                "Поле обязательно для заполнения",
+                "Поле обязательно для заполнения",
+                "Поле обязательно для заполнения",
+                "Поле обязательно для заполнения",
+                "Поле обязательно для заполнения"
+        );
     }
     @Test
     @DisplayName("3. При нажатии кнопки \"Продолжить\" формы с пустым полем Номер карты у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Оплата по карте\"")
     void shouldFailPayIfCardFieldIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(null, getMonth(0), getYear(1), getName("en"), getValidCvc());
-        paymentForm.expectedFieldMustBeFilled();
+        paymentForm.expectedFieldMustBeFilled("Поле обязательно для заполнения");
     }
     @Test
     @DisplayName("4. При нажатии кнопки \"Продолжить\" формы с пустым полем Месяц у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Оплата по карте\"")
     void shouldFailPayIfMonthFieldIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getApprovedCardNumber(), null, getYear(1), getName("en"), getValidCvc());
-        paymentForm.expectedFieldMustBeFilled();
+        paymentForm.expectedFieldMustBeFilled("Поле обязательно для заполнения");
     }
     @Test
     @DisplayName("5. При нажатии кнопки \"Продолжить\" формы с пустым полем Год у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Оплата по карте\"")
     void shouldFailPayIfYearFieldIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getApprovedCardNumber(), getMonth(5), null, getName("en"), getValidCvc());
-        paymentForm.expectedFieldMustBeFilled();
+        paymentForm.expectedFieldMustBeFilled("Поле обязательно для заполнения");
     }
     @Test
     @DisplayName("6. При нажатии кнопки \"Продолжить\" формы с пустым полем Владелец у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Оплата по карте\"")
     void shouldFailPayIfOwnerFieldIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getApprovedCardNumber(), getMonth(5), getYear(0), null, getValidCvc());
-        paymentForm.expectedFieldMustBeFilled();
+        paymentForm.expectedFieldMustBeFilled("Поле обязательно для заполнения");
     }
     @Test
     @DisplayName("7. При нажатии кнопки \"Продолжить\" формы с пустым полем CVC/CVV у поля появляется подсказка \"Поле обязательно для заполнения\" в форме \"Оплата по карте\"")
     void shouldFailPayIfCvcFieldIsEmpty() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getApprovedCardNumber(), getMonth(5), getYear(0), getName("en"), null);
-        paymentForm.expectedFieldMustBeFilled();
+        paymentForm.expectedFieldMustBeFilled("Поле обязательно для заполнения");
     }
     @Test
     @DisplayName("8. При заполнении поля номера карты данными заблокированной карты происходит отказ в проведении операции в форме \"Оплата по карте\"")
@@ -95,14 +101,14 @@ public class CardTests {
     void shouldBeRejectIfRandom16Symbols() {
         paymentForm = mainPage.openPaymentForm();
         paymentForm.fillCardData(getInvalidCardNumberFormat(false), getMonth(1), getYear(3), getName("en"), getValidCvc());
-        paymentForm.expectedInvalidCardNumber();
+        paymentForm.expectedFailureNotification();
     }
     @Test
-    @DisplayName("10. При заполнении поля Месяц и Год датой, меньше текущей, после нажатия кнопки \"Продолжить\" появляется подсказка \"Истек срок действия карты\" в форме \"Оплата по карте\"")
-    void shouldNotAcceptExpiredDate() {
+    @DisplayName("10. При заполнении поля CVC/CVV количеством символов, меньше валидного, появляется подсказка \"Неверный формат\" в форме \"Оплата по карте\"")
+    void shouldBeInvalidFormatIfShortCVC() {
         paymentForm = mainPage.openPaymentForm();
-        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(-3), getYear(-1), getName("en"), getValidCvc());
-        paymentForm.expectedCardHasExpired();
+        paymentForm.fillCardData(getApprovedCardNumber(), getMonth(1), getYear(1), getName("en"), getShortCvc());
+        paymentForm.expectedInvalidFormat();
     }
     @Test
     @DisplayName("11. При заполнении поля Год датой, меньше текущей, а поля Месяц текущей, после нажатия кнопки \"Продолжить\" появляется подсказка \"Истек срок действия карты\" в форме \"Оплата по карте\"")

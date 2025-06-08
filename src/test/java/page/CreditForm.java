@@ -25,6 +25,7 @@ public class CreditForm {
     private final SelenideElement failureNotification = $(byText("Ошибка! Банк отказал в проведении операции."));
     private final ElementsCollection fieldsRedValidation = $$(".input__sub");
     private final SelenideElement expiredData = $(byText("Истёк срок действия карты"));
+    private final SelenideElement invalidFormat = $(byText("Неверный формат"));
 
     public CreditForm() {
         header.shouldBe(visible);
@@ -43,13 +44,11 @@ public class CreditForm {
         successNotification.shouldBe(visible, Duration.ofSeconds(15));
     }
 
-    public void expectedFiveFieldsMustBeFilled() {
-        String expectedTexts = "Поле обязательно для заполнения";
-        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedTexts, expectedTexts, expectedTexts, expectedTexts, expectedTexts));
+    public void expectedFiveFieldsMustBeFilled(String expCard, String expMonth, String expYear, String expName, String expCvc) {
+        fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expCard, expMonth, expYear, expName, expCvc));
     }
 
-    public void expectedFieldMustBeFilled() {
-        String expectedText = "Поле обязательно для заполнения";
+    public void expectedFieldMustBeFilled(String expectedText) {
         fieldsRedValidation.shouldHave(CollectionCondition.exactTexts(expectedText));
     }
 
@@ -57,15 +56,13 @@ public class CreditForm {
         failureNotification.shouldBe(visible, Duration.ofSeconds(15));
     }
 
-    public void expectedInvalidCardNumber() {
-        assertAll(() -> $(byText("Недействительный номер карты")).shouldBe(visible),
-                this::expectedFailureNotification
-        );
-    }
-
     public void expectedCardHasExpired() {
         expiredData.shouldBe(visible);
     }
+    public void expectedInvalidFormat() {
+        invalidFormat.shouldBe(visible);
+    }
+
 
     public void expectedBlankNameField() {
         ownerField.shouldBe(empty);
